@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Venn Diagram Calculator</title>
+    <!-- also, a modern JS tutorial for a 15 year old programmer -->
+    <!--
+      This pulls in the really powerful `Paper.js` library
+      http://paperjs.org/tutorials/
+    -->
+    <script src="https://unpkg.com/paper/dist/paper-core.min.js"></script>
+    <!--
+      type="module"?  .mjs?
+
+      A good place to start is:
+        https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules
+      
+      Basically: lets you
+      1. split up your work into a bunch of files,
+      2. in a way that doesn't require polluting the global namespace
+      3. such that you can `import` other dependencies
+      4. and `export` stuff you want to provide.
+    -->
+    <script type="module" src="index.mjs"></script>
+    <!--
+      Covers all the `style="..."` stuff, and does some hackery around the
+      checkboxes.
+    -->
+    <link rel="stylesheet" type="text/css" href="index.css" />
+  </head>
+  <body>
+    <h2>Venn Page</h2>
+    <p>Choose a set of regions to select the region you want to formulate</p>
+    <!-- this is the rendering resolution; the size is determined in `index.css` -->
+    <canvas width="1024" height="1024"></canvas>
+    <!--
+      Why checkboxes?
+
+      * They have their own state; you don't have to keep variables
+        to see if a button's been pushed; you just check if the box
+        is `checked`.
+      * Because of this, you don't have to keep a `venn_no` around either;
+        you can calculate it on the fly from the state of the DOM
+      * Both of these means you don't have to sync the UI with your program
+        state; the UI _is_ your program state.
+    -->
+    <p>
+      <input type="checkbox" class="region_state" title="I" value="0" />
+      <input type="checkbox" class="region_state" title="II" value="1" />
+      <input type="checkbox" class="region_state" title="III" value="2" />
+      <input type="checkbox" class="region_state" title="IV" value="3" />
+      <input type="checkbox" class="region_state" title="V" value="4" />
+      <input type="checkbox" class="region_state" title="VI" value="5" />
+      <input type="checkbox" class="region_state" title="VII" value="6" />
+      <input type="checkbox" class="region_state" title="Clear" value="CLEAR" />
+    </p>
+
+    <p class="formula">Empty Set</p>
+  </body>
+</html>
+<!--
+  Proceed to reading `index.mjs`...
+-->

@@ -1,0 +1,36 @@
+input[type="checkbox"].region_state {
+  height: 25px;
+  min-width: 40px;
+  /* This hides the actual check box, so we can create our own presentation */
+  font-size: 0;
+}
+/* Creates a pseudoelement that we can style */
+input[type="checkbox"].region_state::before {
+  /* Pull the pseudoelement's text from the real element's title attribute */
+  content: attr(title);
+  /* Behave like a button */
+  display: inline-block;
+  height: 25px;
+  font-size: 20px;
+  line-height: 25px;
+  /* Let it spread out for "Clear" */
+  min-width: 40px;
+  padding: 0 5px;
+  border: 1px solid #888;
+  background: #EEE;
+  text-align: center;
+}
+/* Different presentation for a checked box; inherits from the unchecked version */
+input[type="checkbox"].region_state:checked::before {
+  border: 1px solid #666;
+  background: #CCC;
+}
+
+.formula {
+  font-size: 200%;
+}
+
+canvas {
+  display: block;
+  width: 300px;
+}

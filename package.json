@@ -1,0 +1,10 @@
+{
+  "name": "venn-calculator",
+  "scripts": {
+    "start": "http-server src"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
+}
