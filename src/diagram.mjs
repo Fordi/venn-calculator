@@ -51,13 +51,13 @@ const makeObjects = () => {
   ];
   
   const regions = [
-    sets[0].subtract(sets[1].unite(sets[2])),      // I   = A ∖ (B ∪ C)
-    sets[0].intersect(sets[1]).subtract(sets[2]),  // II  = (A ∩ B) ∖ C
-    sets[1].subtract(sets[0].unite(sets[2])),      // III = B ∖ (A ∪ C)
-    sets[0].intersect(sets[2]).subtract(sets[1]),  // IV  = (A ∩ C) ∖ B
+    sets[0].subtract(sets[1]).subtract(sets[2]),   // I   = A ∖ B ∖ C
+    sets[0].intersect(sets[1]).subtract(sets[2]),  // II  = A ∩ B ∖ C
+    sets[1].subtract(sets[0]).subtract(sets[2]),   // III = B ∖ A ∖ C
+    sets[0].intersect(sets[2]).subtract(sets[1]),  // IV  = A ∩ C ∖ B
     sets[0].intersect(sets[1]).intersect(sets[2]), // V   = A ∩ B ∩ C
-    sets[1].intersect(sets[2]).subtract(sets[0]),  // VI  = (B ∩ C) ∖ A
-    sets[2].subtract(sets[0].unite(sets[1])),      // VII = C ∖ (A ∪ B)
+    sets[1].intersect(sets[2]).subtract(sets[0]),  // VI  = B ∩ C ∖ A
+    sets[2].subtract(sets[0]).subtract(sets[1]),   // VII = C ∖ A ∖ B
   ];
 
   // Make sure the regions are all below the sets, so they don't cover
