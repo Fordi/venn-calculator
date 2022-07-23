@@ -2,7 +2,7 @@ import { AND, FALSE, NOT, OR, TRUE } from './consts.mjs';
 import { isExpression } from './tests.mjs';
 
 export const SET = Symbol('set notation');
-export const RPN = Symbol('reverse polish notation');
+export const POLISH = Symbol('polish notation');
 export const LOGIC = Symbol('logic notation');
 export const SOURCE = Symbol('pasteable');
 
@@ -31,21 +31,21 @@ const stringify = exp => {
   return exp[SET];
 };
 
-export const toRpnString = exp => {
+export const toPolishString = exp => {
   if (typeof exp === 'symbol') {
     return exp.description;
   }
   if (isExpression(exp) && exp.length === 1) {
     return '()';
   }
-  if (!exp[RPN]) {
+  if (!exp[POLISH]) {
     const [operation, ...operands] = exp;
     const value = operation === NOT
-      ? `${toRpnString(operation)}${toRpnString(operands[0])}`
-      : `(${toRpnString(operation).trim()} ${operands.map(toRpnString).join(' ')})`;
-    Object.defineProperty(exp, RPN, { value });
+      ? `${toPolishString(operation)}${toPolishString(operands[0])}`
+      : `(${toPolishString(operation).trim()} ${operands.map(toPolishString).join(' ')})`;
+    Object.defineProperty(exp, POLISH, { value });
   }
-  return exp[RPN];
+  return exp[POLISH];
 };
 
 export const toLogicString = exp => {
@@ -106,8 +106,8 @@ const toString = (exp, mode) => {
         .replace(/^\((.*)\)$/g, '$1')
     ) ?? 'Empty Set';
   }
-  if (m === RPN) {
-    return toRpnString(exp);
+  if (m === POLISH) {
+    return toPolishString(exp);
   }
   if (m === LOGIC) {
     return (
@@ -127,7 +127,7 @@ export const setNotation = (v) => {
 Object.assign(toString, {
   setNotation,
   SET,
-  RPN,
+  POLISH,
   LOGIC,
   SOURCE,
 });

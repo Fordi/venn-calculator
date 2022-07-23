@@ -79,7 +79,6 @@ window.addEventListener('load', () => {
     
       // Get the current Venn number
       const vennNo = getVennNumber();
-      console.log(vennNo);
       // Redraw the diagram to reflect the new number
       updateDiagram(vennNo);
       // Get the Set formula for that number

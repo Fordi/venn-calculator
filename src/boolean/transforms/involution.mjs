@@ -1,9 +1,9 @@
 import { isNot } from "../tests.mjs";
 
-// !!P => P
+// !!P => P; !!!!P => P; etc.
 const involution = (exp) => {
-  if (isNot(exp) && isNot(exp[1])) {
-    return exp[1][1];
+  while (isNot(exp) && isNot(exp[1])) {
+    exp = exp[1][1];
   }
   return exp;
 };

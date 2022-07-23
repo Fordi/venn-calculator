@@ -1,7 +1,5 @@
-import { NOT } from "../consts.mjs";
 import { contains, isAnd, isOr } from "../tests.mjs";
-import { without } from "../tools.mjs";
-import involution from "./involution.mjs";
+import { invert, without } from "../tools.mjs";
 import unwrap from "./unwrap.mjs";
 
 // (∪ P (∩ P Q) ...) <=> (∪ P ...)
@@ -16,7 +14,7 @@ const absorption = (exp) => {
     for (let qi = 1; qi < work.length; qi++) {
       if (qi === pi) continue;
       const Q = work[qi];
-      const notQ = involution([NOT, Q]);
+      const notQ = invert(Q);
       if (contains(P, Q)) {
         work = without(work, P);
       } else if (contains(P, notQ)) {

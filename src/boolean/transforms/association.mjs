@@ -1,5 +1,6 @@
-import { AND, NOT, OR } from "../consts.mjs";
+import { AND, OR } from "../consts.mjs";
 import { isExpression, isNot, isSymbol } from "../tests.mjs";
+import { invert } from "../tools.mjs";
 
 // (∪ (∪ P Q) R) => (∪ P Q R)
 // (∩ (∩ P Q) R) => (∩ P Q R)
@@ -12,7 +13,7 @@ const association = (exp) => {
   const res = [op];
   exprs.forEach((se) => {
     if (isNot(se) && isExpression(se[1]) && se[1][0] === nop) {
-      res.push(...se[1].slice(1).map(e => [NOT, e]));
+      res.push(...se[1].slice(1).map(invert));
       return;
     }
     if (se[0] === op) {

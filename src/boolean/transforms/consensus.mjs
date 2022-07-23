@@ -1,7 +1,6 @@
-import { NOT } from "../consts.mjs";
 import { areEqual, contains, isAnd, isOr } from "../tests.mjs";
-import { without } from "../tools.mjs";
-import involution from "./involution.mjs";
+import { invert, without } from "../tools.mjs";
+
 
 // (u (n P Q) (n P !R) (n Q R) ...) => (u (n P !R) (n Q R) ...)
 
@@ -11,7 +10,7 @@ const testConsensus = (...args) => {
   args.forEach(e => {
     e.slice(1).forEach(x => {
       if (!terms.some(a => {
-        const neg = areEqual(a, involution([NOT, x]));
+        const neg = areEqual(a, invert(x));
         if (neg) nots++;
         return areEqual(a, x) || neg;
       })) {
@@ -22,9 +21,9 @@ const testConsensus = (...args) => {
   if (nots !== 1) return null;
   if (terms.length !== 3) return null;
   // Locate the inverted term...
-  const inv = terms.find(t => args.find(e => contains(e, involution([NOT, t]))));
+  const inv = terms.find(t => args.find(e => contains(e, invert(t))));
   // Return the arg without the inverted term; that's the one that can be dropped.
-  return args.find(a => !contains(a, inv) && !contains(a, involution([NOT, inv])));
+  return args.find(a => !contains(a, inv) && !contains(a, invert(inv)));
 };
 
 const consensus = (exp) => {

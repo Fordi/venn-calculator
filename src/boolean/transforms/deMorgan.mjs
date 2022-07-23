@@ -1,5 +1,6 @@
-import { AND, FALSE, NOT, OR, TRUE } from "../consts.mjs";
+import { AND, FALSE, OR, TRUE } from "../consts.mjs";
 import { isAnd, isNot, isOr } from "../tests.mjs";
+import { invert } from "../tools.mjs";
 
 // !(n ...) => (u !...)
 // !(u ...) => (n !...)
@@ -13,7 +14,7 @@ const deMorgan = (exp) => {
   const a = isAnd(inner);
   const o = isOr(inner);
   if (!(a || o)) return exp;
-  return [a ? OR : AND, ...inner.slice(1).map(a => [NOT, a])];
+  return [a ? OR : AND, ...inner.slice(1).map(invert)];
 };
 
 export default deMorgan;
