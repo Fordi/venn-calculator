@@ -65,9 +65,6 @@ window.addEventListener('load', () => {
         boxes.forEach((box) => {
           box.checked = false;
         });
-        // Redraw with Venn number 0.
-        updateDiagram(0);
-        return;
       } 
       if (target.value === 'INVERT') {
         // swap all the boxes
