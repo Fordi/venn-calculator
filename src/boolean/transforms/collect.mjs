@@ -6,7 +6,7 @@ import { findCommon, without } from "../tools.mjs";
 import absorption from "./absorption.mjs";
 
 // (∪ (∩ P Q) (∩ P R)) => (∩ P (∪ Q R))
-// Do this only if this is an OR and the parent is an AND
+// Do this only if this is an OR and the parent is an AND or top-level (null)
 const collect = (exp, p) => {
   if (!(isOr(exp) && p !== OR)) return exp;
   const ands = exp.slice(1).filter(isAnd);
@@ -18,11 +18,19 @@ const collect = (exp, p) => {
       const others = without(without(exp, ands[pi]), ands[qi]);
       // It's possible that left and right are each other's complements
       const uQR = [OR, left, right];
-      // No advantage; try the next pair.
       if (!(
-        others.length === 1
+        // Potential advantage 1: we reduce to a single AND and parent is an AND,
+        //  so we'll be able to associate upwards
+        //  e.g., A & ((B & A) | (B & C)) => A & B & (A | C)
+        (others.length === 1 && p === OR)
+        // Advantage 2: collected expression contains a complement, which can be
+        //  eliminated to a single bool, then identitied out
+        //  e.g., (B & C) | (B & !C) => B & (C | !C) => B & TRUE => B
         || hasComplement(uQR)
+        // Advantage 3: collected expression will absorb
+        // e.g., (!A & B) | A => B | A
         || !areEqual(uQR, absorption(uQR))
+      // No advantages? try the next pair.
       )) continue;
       const group = [AND, common, uQR];
       if (others.length > 1) {

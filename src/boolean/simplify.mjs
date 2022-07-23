@@ -4,7 +4,7 @@ import toString from "./toString.mjs";
 import transforms from './transforms/index.mjs';
 
 // Turn on for debugging...
-const LOG = false;
+let LOG = false;
 let depth = 0;
 
 const simpSubs = exp => {
@@ -26,7 +26,7 @@ const pass = (exp, p = null) => {
     const r = transforms[name](exp, p);
     if (!areEqual(exp, r)) {
       if (LOG) {
-        console.log(`${indent()}${name}: ${toString(exp)} -> ${toString(r)}`);
+        console.log(`${indent()}${name}${p ? `(${p.description.trim()})` : ''}: ${toString(exp)} -> ${toString(r)}`);
       }
       return sortExpr(simpSubs(r));
     }
@@ -43,4 +43,8 @@ export const simplify = (exp, p = null) => {
     next = pass(exp, p);
   }
   return next;
+};
+
+simplify.log = v => {
+  LOG = v;
 };

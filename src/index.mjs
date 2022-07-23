@@ -2,7 +2,8 @@
 import getFormula from './getFormula.mjs';
 import { findEls } from './dom.mjs';
 import diagram from './diagram.mjs';
-import { LOGIC, RPN, SET } from './boolean/toString.mjs';
+import toString from './boolean/toString.mjs';
+import { simplify } from './boolean/simplify.mjs';
 
 // Calculate the Venn number for the selected checkboxes
 // Incidentally, this is an arrow function
@@ -41,16 +42,13 @@ const getVennNumber = () => ( // < inline return parenthesis
     }, 0)
 );
 
-const notations = {
-  SET,
-  RPN,
-  LOGIC,
-};
 
 const getNotation = () => {
   const { value } = document.querySelector('.notation input[type="radio"][name="notation"]:checked');
-  return notations[value];
+  return toString[value];
 };
+
+const formatFormula = n => toString(simplify(getFormula(n)), getNotation());
 
 // Once the window is loaded, and we have access to the full DOM...
 window.addEventListener('load', () => {
@@ -69,26 +67,38 @@ window.addEventListener('load', () => {
         });
         // Redraw with Venn number 0.
         updateDiagram(0);
-      } else {
-        // Get the current Venn number
-        const vennNo = getVennNumber();
-        // Redraw the diagram to reflect the new number
-        updateDiagram(vennNo);
-        // Get the Set formula for that number
-        const result = getFormula(vennNo, getNotation());
-        // populate the output with the new info.
-        findEls('.formula').forEach((el) => {
-          el.textContent = `${vennNo}: ${result}`;
+        return;
+      } 
+      if (target.value === 'INVERT') {
+        // swap all the boxes
+        boxes.forEach((box) => {
+          if (!Number.isNaN(parseInt(box.value))) {
+            box.checked = !box.checked;
+          }
         });
+        target.checked = false;
+        // Fall through to default handler
       }
+    
+      // Get the current Venn number
+      const vennNo = getVennNumber();
+      console.log(vennNo);
+      // Redraw the diagram to reflect the new number
+      updateDiagram(vennNo);
+      // Get the Set formula for that number
+      const result = formatFormula(vennNo);
+      // populate the output with the new info.
+      findEls('.formula').forEach((el) => {
+        el.textContent = `${vennNo}: ${result}`;
+      });
     });
   });
   findEls('.notation input[type="radio"]').forEach((rb) => {
     rb.addEventListener('change', () => {
       const vennNo = getVennNumber();
-      const result = getFormula(vennNo, getNotation());
+      const result = formatFormula(vennNo);
       findEls('.formula').forEach((el) => {
-        el.textContent = `${vennNo}: ${result}`;
+        el.textContent = `${result}`;
       });
     });
   });

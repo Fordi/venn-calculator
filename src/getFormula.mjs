@@ -1,7 +1,5 @@
 import { AND, OR, NOT } from './boolean/consts.mjs';
-import { simplify } from './boolean/simplify.mjs';
 import { term } from './boolean/tools.mjs';
-import toString, { SET } from './boolean/toString.mjs';
 
 const A = term('A');
 const B = term('B');
@@ -22,8 +20,7 @@ const REGIONS = [
   [AND, C, NOT_A, NOT_B], // C \ A \ B
 ];
 
-const getFormula = (n, t = SET) => toString(simplify(
-  [OR, ...REGIONS.filter((_, bitNo) => ((n >> bitNo) & 1) !== 0)]
-), t);
+const getFormula = n => [OR, ...REGIONS.filter((_, bitNo) => ((n >> bitNo) & 1) !== 0)];
+
 
 export default getFormula;

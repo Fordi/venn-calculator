@@ -4,7 +4,7 @@ import identity from './identity.mjs';
 import association from './association.mjs';
 import complement from './complement.mjs';
 import involution from './involution.mjs';
-import inversion from './inversion.mjs';
+import deMorgan from './deMorgan.mjs';
 import absorption from './absorption.mjs';
 import consensus from './consensus.mjs';
 import collect from './collect.mjs';
@@ -17,10 +17,9 @@ export default {
   association,
   complement,
   involution,
-  inversion,
+  deMorgan,
   absorption,
-  association,
-  consensus,
-  collect,
   distribute,
+  collect,
+  consensus,
 };

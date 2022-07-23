@@ -5,7 +5,7 @@ import { isAnd, isNot, isOr } from "../tests.mjs";
 // !(u ...) => (n !...)
 // !TRUE => FALSE
 // !FALSE => TRUE
-const inversion = (exp) => {
+const deMorgan = (exp) => {
   if (!isNot(exp)) return exp;
   const inner = exp[1];
   if (inner === TRUE) return FALSE;
@@ -16,4 +16,4 @@ const inversion = (exp) => {
   return [a ? OR : AND, ...inner.slice(1).map(a => [NOT, a])];
 };
 
-export default inversion;
+export default deMorgan;

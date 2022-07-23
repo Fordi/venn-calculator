@@ -4,6 +4,9 @@ import { isExpression } from './tests.mjs';
 export const SET = Symbol('set notation');
 export const RPN = Symbol('reverse polish notation');
 export const LOGIC = Symbol('logic notation');
+export const SOURCE = Symbol('pasteable');
+
+let defaultNotation = SET;
 
 const stringify = exp => {
   if (typeof exp === 'symbol') {
@@ -28,17 +31,9 @@ const stringify = exp => {
   return exp[SET];
 };
 
-const rpnMap = {
-  [AND]: 'AND',
-  [OR]: 'OR',
-  [NOT]: 'NOT',
-  [TRUE]: 'TRUE',
-  [FALSE]: 'FALSE',
-};
-
 export const toRpnString = exp => {
   if (typeof exp === 'symbol') {
-    return rpnMap[exp] ?? exp.description;
+    return exp.description;
   }
   if (isExpression(exp) && exp.length === 1) {
     return '()';
@@ -54,8 +49,10 @@ export const toRpnString = exp => {
 };
 
 export const toLogicString = exp => {
+  if (exp === TRUE) return '1';
+  if (exp === FALSE) return '0';
   if (typeof exp === 'symbol') {
-    return rpnMap[exp] ?? exp.description;
+    return exp.description;
   }
   if (isExpression(exp) && exp.length === 1) {
     return '∅';
@@ -77,21 +74,62 @@ export const toLogicString = exp => {
   return exp[LOGIC];
 };
 
-export default (exp, mode = SET) => {
-  if (mode === SET) {
+const srcMap = {
+  [AND]: 'AND',
+  [OR]: 'OR',
+  [NOT]: 'NOT',
+  [TRUE]: 'TRUE',
+  [FALSE]: 'FALSE',
+};
+
+export const toSource = (exp) => {
+  if (typeof exp === 'symbol') {
+    return srcMap[exp] ?? exp.description;
+  }
+  if (isExpression(exp) && exp.length === 1) {
+    return 'undefined';
+  }
+  if (!exp[SOURCE]) {
+    Object.defineProperty(exp, SOURCE, {
+      value: `[${exp.map(toSource).join(', ')}]`
+    });
+  }
+  return exp[SOURCE];
+};
+
+const toString = (exp, mode) => {
+  const m = mode ?? defaultNotation;
+  if (m === SET) {
     return (
       stringify(exp)
         .replace(/∩ !/g, '∖ ')
         .replace(/^\((.*)\)$/g, '$1')
     ) ?? 'Empty Set';
   }
-  if (mode === RPN) {
+  if (m === RPN) {
     return toRpnString(exp);
   }
-  if (mode === LOGIC) {
+  if (m === LOGIC) {
     return (
       toLogicString(exp)
         .replace(/^\((.*)\)$/g, '$1')
     );
   }
+  if (m === SOURCE) {
+    return toSource(exp);
+  }
 };
+
+export const setNotation = (v) => {
+  defaultNotation = v;
+};
+
+Object.assign(toString, {
+  setNotation,
+  SET,
+  RPN,
+  LOGIC,
+  SOURCE,
+});
+
+export default toString;

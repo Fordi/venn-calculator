@@ -1,4 +1,5 @@
 import { AND, OR, NOT } from './consts.mjs';
+import involution from './transforms/involution.mjs';
 
 export const isExpression = exp => Array.isArray(exp);
 export const isOr = exp => isExpression(exp) && exp[0] === OR;
@@ -26,11 +27,15 @@ export const areEqual = (e1, e2) => {
 
 export const hasComplement = (exp) => {
   for (let p = 1; p < (exp.length - 1); p++) {
+    const P = exp[p];
     for (let q = p + 1; q < exp.length; q++) {
-      if (areEqual(exp[p], [NOT, exp[q]]) || areEqual([NOT, exp[p]], exp[q])) {
-        return true;
-      }
+      const Q = exp[q];
+      const notQ = involution([NOT, Q]);
+      if (areEqual(P, notQ)) return true;
     }
   }
   return false;
 };
+
+export const hasOr = (exp) => exp.slice(1).some(isOr);
+export const hasAnd = (exp) => exp.slice(1).some(isAnd);

@@ -19,8 +19,8 @@ const testConsensus = (...args) => {
       }
     });
   });
-  if (nots !== 1) return [];
-  if (terms.length !== 3) return [];
+  if (nots !== 1) return null;
+  if (terms.length !== 3) return null;
   // Locate the inverted term...
   const inv = terms.find(t => args.find(e => contains(e, involution([NOT, t]))));
   // Return the arg without the inverted term; that's the one that can be dropped.
@@ -38,12 +38,12 @@ const consensus = (exp) => {
       for (let k = j + 1; k < ands.length; k++) {
         const remove = testConsensus(ands[i], ands[j], ands[k]);
         if (remove) {
-          work = without(work, remove);
+          return without(work, remove);
         }
       }
     }
   }
-  return work;
+  return exp;
 };
 
 export default consensus;
