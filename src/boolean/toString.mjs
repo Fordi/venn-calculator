@@ -41,8 +41,8 @@ export const toRpnString = exp => {
   if (!exp[RPN]) {
     const [operation, ...operands] = exp;
     const value = operation === NOT
-      ? `(${toRpnString(operation)} ${toRpnString(operands[0])})`
-      : `(${toRpnString(operation)} ${operands.map(toRpnString).join(' ')})`;
+      ? `${toRpnString(operation)}${toRpnString(operands[0])}`
+      : `(${toRpnString(operation).trim()} ${operands.map(toRpnString).join(' ')})`;
     Object.defineProperty(exp, RPN, { value });
   }
   return exp[RPN];
