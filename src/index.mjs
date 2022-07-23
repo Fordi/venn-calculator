@@ -50,44 +50,65 @@ const getNotation = () => {
 
 const formatFormula = n => toString(simplify(getFormula(n)), getNotation());
 
+// See: https://en.wikipedia.org/wiki/Gray_code
+const binToGray = (n) => n ^ (n >> 1);
+const grayToBin = (n) => {
+  let m = n;
+  while (m) {
+    m >>= 1;
+    n ^= m;
+  }
+  return n;
+};
+
+const setVennNumber = (n) => {
+  findEls('.region_state input[type="checkbox"]').forEach((box) => {
+    box.checked = ((n >> box.value) & 1) !== 0;
+  });
+};
+
 // Once the window is loaded, and we have access to the full DOM...
 window.addEventListener('load', () => {
   // Get all the checkboxes
   const boxes = findEls('.region_state input[type="checkbox"]');
+  const update = () => {
+    // Get the current Venn number
+    const vennNo = getVennNumber();
+    // Redraw the diagram to reflect the new number
+    updateDiagram(vennNo);
+    // Get the Set formula for that number
+    const result = formatFormula(vennNo);
+    // populate the output with the new info.
+    findEls('.formula').forEach((el) => {
+      el.textContent = `${vennNo}: ${result}`;
+    });
+  };
+  const auto = () => {
+    if (!document.querySelector('input#rAuto').checked) return;
+    const next = binToGray((grayToBin(getVennNumber()) + 1) & 0x7F);
+    setVennNumber(next);
+    update();
+    setTimeout(auto, 250);
+  }
+  document.querySelector('input#rAuto').addEventListener('click', auto);
   // On each one...
   //   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach
   boxes.forEach((el) => {
     // Listen for changes
-    el.addEventListener('change', ({ target }) => {
-      // If the changed element is the clear button...
-      if (target.value === 'CLEAR') {
-        // uncheck all the boxes
-        boxes.forEach((box) => {
-          box.checked = false;
-        });
-      } 
-      if (target.value === 'INVERT') {
-        // swap all the boxes
-        boxes.forEach((box) => {
-          if (!Number.isNaN(parseInt(box.value))) {
-            box.checked = !box.checked;
-          }
-        });
-        target.checked = false;
-        // Fall through to default handler
-      }
-    
-      // Get the current Venn number
-      const vennNo = getVennNumber();
-      // Redraw the diagram to reflect the new number
-      updateDiagram(vennNo);
-      // Get the Set formula for that number
-      const result = formatFormula(vennNo);
-      // populate the output with the new info.
-      findEls('.formula').forEach((el) => {
-        el.textContent = `${vennNo}: ${result}`;
-      });
+    el.addEventListener('change', update);
+  });
+  document.querySelector('.invert').addEventListener('click', () => {
+    // swap all the boxes
+    boxes.forEach((box) => {
+      box.checked = !box.checked;
     });
+    update();
+  });
+  document.querySelector('.clear').addEventListener('click', () => {
+    boxes.forEach((box) => {
+      box.checked = false;
+    });
+    update();
   });
   findEls('.notation input[type="radio"]').forEach((rb) => {
     rb.addEventListener('change', () => {
