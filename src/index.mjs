@@ -1,6 +1,8 @@
+/* globals window, document, paper */
 import getFormula from './getFormula.mjs';
 import { findEls } from './dom.mjs';
 import diagram from './diagram.mjs';
+import { LOGIC, RPN, SET } from './boolean/toString.mjs';
 
 // Calculate the Venn number for the selected checkboxes
 // Incidentally, this is an arrow function
@@ -15,7 +17,7 @@ const getVennNumber = () => ( // < inline return parenthesis
   //    casts the result to an Array so you can use array comprehension stuff
   //    (like Array#reduce and Array#forEach) to operate on a bunch of elements
   //    at a time.
-  findEls('input[type="checkbox"].region_state')
+  findEls('.region_state input[type="checkbox"]')
     // Array#reduce basically steps through all the items in an array,
     //   runs the passed function on them, and returns the result.
     //   docs here:
@@ -39,10 +41,21 @@ const getVennNumber = () => ( // < inline return parenthesis
     }, 0)
 );
 
+const notations = {
+  SET,
+  RPN,
+  LOGIC,
+};
+
+const getNotation = () => {
+  const { value } = document.querySelector('.notation input[type="radio"][name="notation"]:checked');
+  return notations[value];
+};
+
 // Once the window is loaded, and we have access to the full DOM...
 window.addEventListener('load', () => {
   // Get all the checkboxes
-  const boxes = findEls('input[type="checkbox"].region_state');
+  const boxes = findEls('.region_state input[type="checkbox"]');
   // On each one...
   //   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach
   boxes.forEach((el) => {
@@ -62,12 +75,21 @@ window.addEventListener('load', () => {
         // Redraw the diagram to reflect the new number
         updateDiagram(vennNo);
         // Get the Set formula for that number
-        const result = getFormula(vennNo);
+        const result = getFormula(vennNo, getNotation());
         // populate the output with the new info.
         findEls('.formula').forEach((el) => {
-          el.textContent = result;
+          el.textContent = `${vennNo}: ${result}`;
         });
       }
+    });
+  });
+  findEls('.notation input[type="radio"]').forEach((rb) => {
+    rb.addEventListener('change', () => {
+      const vennNo = getVennNumber();
+      const result = getFormula(vennNo, getNotation());
+      findEls('.formula').forEach((el) => {
+        el.textContent = `${vennNo}: ${result}`;
+      });
     });
   });
   // Initialize Paper.js

@@ -6,5 +6,8 @@
   "license": "ISC",
   "dependencies": {
     "http-server": "^14.1.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.20.0"
   }
 }

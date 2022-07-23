@@ -1,137 +1,29 @@
-// TODO: work out a way to calculate this on the fly.
-//  Regions form a binary number 0..127, where bit 0 is region I and bit 6 is region VII
+import { AND, OR, NOT } from './boolean/consts.mjs';
+import { simplify } from './boolean/simplify.mjs';
+import { term } from './boolean/tools.mjs';
+import toString, { SET } from './boolean/toString.mjs';
 
-const FORMULAE = [
-  "Empty Set",
-  "A∖(B∪C)",
-  "(A∩B)∖C",
-  "A∖C",
-  "B∖(A∪C)",
-  "(A∪B)∖[(A∩B)∪C]",
-  "B∖C",
-  "(A∪B)∖C",
-  "(C∩B)∖A",
-  "[A∖(B∪C)]∪[(C∩B)∖A]",
-  "[(A∩B)∖C]∪[(C∩B)∖A]",
-  "[A∖C]∪[(C∩B)∖A]",
-  "B∖A",
-  "(B∖A)∪[A∖(B∪C)]",
-  "[(A∩B)∖C]∪(B∖A)",
-  "[(A∪B)∖C]∪[(C∩B)∖A]",
-  "A∩B∩C",
-  "[A∩B∩C]∪[A∖(B∪C)]",
-  "A∩B",
-  "[A∖(B∪C)]∪(A∩B)",
-  "[B∖(A∪C)]∪[A∩B∩C]",
-  "{(A∪B)∖[(A∩B)∪C]}∪(A∩B∩C)",
-  "B∖[(C∩B)∖A]",
-  "[(A∪B)∖C]∪(A∩B∩C)",
-  "B∩C",
-  "(B∩C)∪[A∖(B∪C)]",
-  "(A∩B)∪(B∩C)",
-  "[A∖(B∪C)]∪[(A∩B)∪(B∩C)]",
-  "B∖[(A∩B)∖C]",
-  "{B∖[(A∩B)∖C]}∪[A∖(B∪C)]",
-  "B",
-  "B∪(A∖C)",
-  "(A∩C)∖B",
-  "A∖B",
-  "[(A∩B)∖C]∪[(A∩C)∖B]",
-  "A∖(A∩B∩C)",
-  "[B∖(A∪C)]∪[(A∩C)∖B]",
-  "(A∖B)∪[B∖(A∪C)]",
-  "(B∖C)∪[(A∩C)∖B]",
-  "(A∪B)∖(B∩C)",
-  "[(C∩B)∖A]∪[(A∩C)∖B]",
-  "[A∖B]∪[(A∩C)∖B]",
-  "[(A∩C)∖B]∪[(A∩B)∖C]∪[(C∩B)∖A]",
-  "[(C∩B)∖A]∪[(A∩B)∖C]∪[A∖B]",
-  "[B∖A]∪(A∩C)∖B",
-  "(A∖B)∪(B∖A)",
-  "[B∪(A∩C)]∖(A∩B∩C)",
-  "(A∪B)∖(A∩B∩C)",
-  "A∩C",
-  "(A∩C)∪(A∖B)",
-  "A∩(B∪C)",
-  "A",
-  "(A∩C)∪[B∖(A∪C)]",
-  "(A∩C)∪[B∖(A∪C)]∪[A∖(B∪C)]",
-  "(A∩C)∪(B∖C)",
-  "A∪(B∖C)",
-  "(A∩C)∪(B∩C)",
-  "(B∩C)∪(A∖B)",
-  "(A∩B)∪(A∩C)∪(B∩C)",
-  "A∪(B∩C)",
-  "(A∩C)∪(B∖A)",
-  "(A∖B)∪(B∖A)∪(A∩C)",
-  "B∪(A∩C)",
-  "A∪B",
-  "C∖(A∪B)",
-  "[A∖(B∪C)]∪[C∖(A∪B)]",
-  "[C∖(A∪B)]∪[(A∩B)∖C]",
-  "(A∖C)∪[C∖(A∪B)]",
-  "[C∖(A∪B)]∪[B∖(A∪C)]",
-  "[A∪B∪C]∖[(A∩B)∪(A∩C)∪(B∩C)]",
-  "(B∖C)∪[C∖(A∪B)]",
-  "[(A∪B)∖C]∪[C∖(A∪B)]",
-  "C∖A",
-  "(C∖A)∪[A∖(B∪C)]",
-  "(C∖A)∪[(A∩B)∖C]",
-  "(A∪C)∖(A∩C)",
-  "(B∪C)∖A",
-  "[(B∪C)∖A]∪[A∖(B∪C)]",
-  "(B∪C)∖(A∩C)",
-  "(A∪B∪C)∖(A∩C)",
-  "[C∖(A∪B)]∪(A∩B∩C)",
-  "[C∖(A∪B)]∪(A∩B∩C)∪[A∖(B∪C)]",
-  "(A∩B)∪[C∖(A∪B)]",
-  "(A∩B)∪[C∖(A∪B)]∪[A∖(B∪C)]",
-  "[C∖(A∪B)]∪(A∩B∩C)∪[B∖(A∪C)]",
-  "[C∖(A∪B)]∪(A∩B∩C)∪[B∖(A∪C)]∪[A∖(B∪C)]",
-  "[C∖(A∪B)]∪(A∩B)∪[B∖(A∪C)]",
-  "[C∖(A∪B)]∪(A∩B)∪[B∖(A∪C)]∪[A∖(B∪C)]",
-  "(C∖A)∪(B∩C)",
-  "(C∖A)∪(B∩C)∪[A∖(B∪C)]",
-  "(A∩B)∪(C∖A)",
-  "(A∪C)∖[(A∩C)∖B]",
-  "(B∩C)∪[B∖(A∪C)]∪[C∖(A∪B)]",
-  "(B∩C)∪[B∖(A∪C)]∪[C∖(A∪B)]∪[A∖(B∪C)]",
-  "(C∖A)∪B",
-  "(A∪B∪C)∖[(A∩B)∖C]",
-  "C∖B",
-  "(A∪C)∖B",
-  "(C∖B)∪[(A∩B)∖C]",
-  "(A∪B)∖(B∩C)",
-  "(B∪C)∖[(A∩B)∪(B∩C)]",
-  "(A∪B∪C)∖[(A∩B)∪(B∩C)]",
-  "(B∪C)∖(B∩C)",
-  "(A∪B∪C)∖(B∩C)]",
-  "C∖(A∩B)",
-  "(A∪C)∖(A∩B)",
-  "C∪[(A∩B)∖C",
-  "(A∪C)∖(A∩B∩C)",
-  "(B∪C)∖(A∩B)",
-  "(A∪B∪C)∖(A∩B)",
-  "(B∪C)∖(A∩B∩C)",
-  "(A∪B∪C)∖(A∩B∩C)",
-  "C∖[(B∩C)∖A]",
-  "[(A∪C)∖B]∪[A∩B∩C]",
-  "[C∖B]∪[A∩B]",
-  "A∪[C∖(A∪B)]",
-  "(B∪C)∖{[(B∩C)∖A]∪[(A∩B)∖C]}",
-  "(A∪B∪C)∖{[B∩C)∖A]∪[(A∩B)∖C]}",
-  "(B∪C)∖[(B∩C)∖A]",
-  "(A∪B∪C)∖[(B∩C)∖A]",
-  "C",
-  "C∪[A∖(B∪C)]",
-  "C∪(A∩B)",
-  "A∪C",
-  "[(B∪C)∖A]∪(A∩C)",
-  "(A∪B∪C)∖[(A∩B)∖C]",
-  "B∪C",
-  "A∪B∪C"
+const A = term('A');
+const B = term('B');
+const C = term('C');
+
+const NOT_A = [NOT, A];
+const NOT_B = [NOT, B];
+const NOT_C = [NOT, C];
+
+// Reverse polish notation, since that's easier to code around.
+const REGIONS = [
+  [AND, A, NOT_B, NOT_C], // A \ B \ C
+  [AND, A, B, NOT_C],     // A n B \ C
+  [AND, B, NOT_A, NOT_C], // B \ A \ C
+  [AND, A, C, NOT_B],     // A n C \ B
+  [AND, A, B, C],         // A n B n C
+  [AND, B, C, NOT_A],     // B n C \ A
+  [AND, C, NOT_A, NOT_B], // C \ A \ B
 ];
 
-// Export as a function so we can easily calculate this later without changing
-// dependent code.
-export default (n) => FORMULAE[n];
+const getFormula = (n, t = SET) => toString(simplify(
+  [OR, ...REGIONS.filter((_, bitNo) => ((n >> bitNo) & 1) !== 0)]
+), t);
+
+export default getFormula;

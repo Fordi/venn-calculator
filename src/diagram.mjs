@@ -1,6 +1,6 @@
+/* globals paper */
 // More destructuring; this time, to keep things terse
 const { sin, cos, PI } = Math;
-const { assign } = Object;
 const { Path: { Circle }, PointText } = paper;
 
 const TAU = PI * 2; // a.k.a., 360 degrees, or one turn.
@@ -28,11 +28,6 @@ const makeObjects = () => {
     strokeColor: 'black',
     fillColor: 'transparent',
     radius: scale,
-  };
-  // The style for the regions (the fills within each circle)
-  const regionStyle = {
-    strokeColor: 'none',
-    fillColor: 'transparent',
   };
   // The style for the labels
   const labelStyle = {

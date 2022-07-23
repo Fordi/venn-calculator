@@ -8,7 +8,7 @@
       This pulls in the really powerful `Paper.js` library
       http://paperjs.org/tutorials/
     -->
-    <script src="https://unpkg.com/paper/dist/paper-core.min.js"></script>
+    <script src="./paper-core.min.js"></script>
     <!--
       type="module"?  .mjs?
 
@@ -44,15 +44,21 @@
       * Both of these means you don't have to sync the UI with your program
         state; the UI _is_ your program state.
     -->
-    <p>
-      <input type="checkbox" class="region_state" title="I" value="0" />
-      <input type="checkbox" class="region_state" title="II" value="1" />
-      <input type="checkbox" class="region_state" title="III" value="2" />
-      <input type="checkbox" class="region_state" title="IV" value="3" />
-      <input type="checkbox" class="region_state" title="V" value="4" />
-      <input type="checkbox" class="region_state" title="VI" value="5" />
-      <input type="checkbox" class="region_state" title="VII" value="6" />
-      <input type="checkbox" class="region_state" title="Clear" value="CLEAR" />
+    <p class="region_state">
+      <input type="checkbox" title="I" value="0" />
+      <input type="checkbox" title="II" value="1" />
+      <input type="checkbox" title="III" value="2" />
+      <input type="checkbox" title="IV" value="3" />
+      <input type="checkbox" title="V" value="4" />
+      <input type="checkbox" title="VI" value="5" />
+      <input type="checkbox" title="VII" value="6" />
+      <input type="checkbox" title="Clear" value="CLEAR" />
+    </p>
+
+    <p class="notation">
+      <label for="setN"><input checked name="notation" type="radio" id="setN" value="SET" />Set notation</label>
+      <label for="rpnN"><input name="notation" type="radio" id="rpnN" value="RPN" />RP notation</label>
+      <label for="logN"><input name="notation" type="radio" id="logN" value="LOGIC" />Logic notation</label>
     </p>
 
     <p class="formula">Empty Set</p>

@@ -1,11 +1,11 @@
-input[type="checkbox"].region_state {
+.region_state input[type="checkbox"] {
   height: 25px;
   min-width: 40px;
   /* This hides the actual check box, so we can create our own presentation */
   font-size: 0;
 }
 /* Creates a pseudoelement that we can style */
-input[type="checkbox"].region_state::before {
+.region_state input[type="checkbox"]::before {
   /* Pull the pseudoelement's text from the real element's title attribute */
   content: attr(title);
   /* Behave like a button */
@@ -21,7 +21,7 @@ input[type="checkbox"].region_state::before {
   text-align: center;
 }
 /* Different presentation for a checked box; inherits from the unchecked version */
-input[type="checkbox"].region_state:checked::before {
+.region_state input[type="checkbox"]:checked::before {
   border: 1px solid #666;
   background: #CCC;
 }
