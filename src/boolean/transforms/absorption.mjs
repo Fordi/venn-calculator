@@ -2,6 +2,7 @@ import { contains, isAnd, isOr } from "../tests.mjs";
 import { invert, without } from "../tools.mjs";
 import unwrap from "./unwrap.mjs";
 
+// https://en.wikipedia.org/wiki/Absorption_(logic)
 // (∪ P (∩ P Q) ...) <=> (∪ P ...)
 // (∪ (∩ !P Q) P) <=> (∪ P Q)
 // (∪ (∩ P Q) !P) <=> (∪ !P Q)

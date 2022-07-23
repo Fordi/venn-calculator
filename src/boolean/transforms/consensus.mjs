@@ -1,9 +1,9 @@
 import { areEqual, contains, isAnd, isOr } from "../tests.mjs";
 import { invert, without } from "../tools.mjs";
 
-
+// https://en.wikipedia.org/wiki/Consensus_theorem
 // (u (n P Q) (n P !R) (n Q R) ...) => (u (n P !R) (n Q R) ...)
-
+// The resolvent of (n P !R) and (n Q R) is (n P Q), so it can be removed.
 const testConsensus = (...args) => {
   const terms = [];
   let nots = 0;

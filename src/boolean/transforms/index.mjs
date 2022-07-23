@@ -10,6 +10,9 @@ import consensus from './consensus.mjs';
 import collect from './collect.mjs';
 import distribute from './distribute.mjs';
 
+// This is called a "Barrel file", it collects all the stuff in this directory
+//  into a single object.
+
 export default {
   unwrap,
   tautology,

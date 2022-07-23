@@ -2,6 +2,7 @@ import { AND, OR } from "../consts.mjs";
 import { isExpression, isNot, isSymbol } from "../tests.mjs";
 import { invert } from "../tools.mjs";
 
+// https://en.wikipedia.org/wiki/Boolean_algebra#Monotone_laws
 // (∪ (∪ P Q) R) => (∪ P Q R)
 // (∩ (∩ P Q) R) => (∩ P Q R)
 // (∪ !(n P Q) R) => (∪ P Q R)

@@ -2,6 +2,7 @@ import { AND, FALSE, OR, TRUE } from "../consts.mjs";
 import { isAnd, isNot, isOr } from "../tests.mjs";
 import { invert } from "../tools.mjs";
 
+// https://en.wikipedia.org/wiki/De_Morgan%27s_laws
 // !(n ...) => (u !...)
 // !(u ...) => (n !...)
 // !TRUE => FALSE

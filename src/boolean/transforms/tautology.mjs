@@ -1,5 +1,6 @@
 import { areEqual, isNot, isSymbol } from "../tests.mjs";
 
+// https://en.wikipedia.org/wiki/Boolean_algebra#Monotone_laws (idempotence)
 // Eliminate duplicates within expressions.
 //  (o P P ...) => (o P ...)
 const tautology = (exp) => {

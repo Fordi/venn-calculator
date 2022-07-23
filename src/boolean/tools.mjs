@@ -1,4 +1,4 @@
-import { NOT } from "./consts.mjs";
+import { FALSE, NOT, TRUE } from "./consts.mjs";
 import { areEqual, isExpression, isNot, isSymbol } from "./tests.mjs";
 
 export const findCommon = (exp1, exp2) => {
@@ -70,5 +70,7 @@ export const sortExpr = (exp) => {
 
 export const invert = (expression) => {
   if (isNot(expression)) return expression[1];
+  if (expression === TRUE) return FALSE;
+  if (expression === FALSE) return TRUE;
   return [NOT, expression];
 };

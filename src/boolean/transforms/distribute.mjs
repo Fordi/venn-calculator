@@ -2,6 +2,7 @@ import { AND, OR } from "../consts.mjs";
 import { hasOr, isAnd, isOr } from "../tests.mjs";
 import association from "./association.mjs";
 
+// https://en.wikipedia.org/wiki/Boolean_algebra#Monotone_laws
 // (∩ (∪ A B C) (∪ E F G)) => (u AE BE CE AF BF CF AG BG CG)
 // only do this if the parent node is an OR, and the expression contains ORs
 // This helps us associatively collapse the expression

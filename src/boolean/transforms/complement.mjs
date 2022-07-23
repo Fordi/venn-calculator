@@ -1,6 +1,7 @@
 import { FALSE, TRUE } from "../consts.mjs";
 import { hasComplement, isAnd, isNot, isOr, isSymbol } from "../tests.mjs";
 
+// https://en.wikipedia.org/wiki/Boolean_algebra#Nonmonotone_laws (complementation)
 // (∪ P !P ...) => TRUE
 // (∩ P !P ...) => FALSE
 const complement = (exp) => {

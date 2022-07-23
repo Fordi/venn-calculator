@@ -5,6 +5,7 @@ import { areEqual, hasComplement, isAnd, isOr } from "../tests.mjs";
 import { findCommon, without } from "../tools.mjs";
 import absorption from "./absorption.mjs";
 
+// https://en.wikipedia.org/wiki/Boolean_algebra#Monotone_laws
 // (∪ (∩ P Q) (∩ P R)) => (∩ P (∪ Q R))
 // Do this only if this is an OR and the parent is an AND or top-level (null)
 const collect = (exp, p) => {

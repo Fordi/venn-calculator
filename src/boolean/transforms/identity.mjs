@@ -8,6 +8,7 @@ import {
 } from '../tests.mjs';
 import { without } from '../tools.mjs';
 
+// https://en.wikipedia.org/wiki/Boolean_algebra#Monotone_laws (annihilators)
 // (∩ FALSE ...) => FALSE
 // (∩ TRUE ...) => (∩ ...)
 // (∪ TRUE ...) => TRUE

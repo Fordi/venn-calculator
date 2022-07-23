@@ -1,6 +1,8 @@
 import { isExpression, isNot } from '../tests.mjs';
 
 // unwrap non-unary ops with one argument.  Do this recursively.
+// (u exp) => exp
+// (n exp) => exp
 const unwrap = (exp) => {
   if (!isExpression(exp)) return exp;
   if (!isNot(exp) && exp.length === 2) return exp[1];
