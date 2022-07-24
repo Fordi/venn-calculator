@@ -59,13 +59,20 @@ export const sortExpr = (exp) => {
   const [p, ...subs] = exp;
   const exprs = subs.sort((a, b) => order(a, p) - order(b, p)).map(s => sortExpr(s));
   // Rewrite the expression
-  if (!exprs.some((a) => !isNot(a))) {
-    return exp;
-  } else while (isNot(exprs[0])) {
-    // Rotate until the first arg is not a NOT.
-    exprs.push(exprs.shift());
+  if (exprs.some((a) => !isNot(a))) {
+    while (isNot(exprs[0])) {
+      // Rotate until the first arg is not a NOT.
+      // This is so !ABC can be written with SET notation's `\`, e.g.,
+      // !ABC -> BC!A -> B n C \ A.
+      // !A!BC -> C \ A \ B
+      // What happens if they're all nots?  You get a leading not, that's all,
+      // e.g., !A!B!C -> !A \ B \ C
+      // This is technically an empty set, though.
+      exprs.push(exprs.shift());
+    }
+    return [p, ...exprs];
   }
-  return [p, ...exprs];
+  return exp;
 };
 
 export const invert = (expression) => {
