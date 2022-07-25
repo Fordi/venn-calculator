@@ -1,4 +1,4 @@
-import { FALSE, NOT, TRUE } from "./consts.mjs";
+import { AND, FALSE, KEYWORDS, NOT, OR, TRUE } from "./consts.mjs";
 import { areEqual, isExpression, isNot, isSymbol } from "./tests.mjs";
 
 export const findCommon = (exp1, exp2) => {
@@ -80,4 +80,55 @@ export const invert = (expression) => {
   if (expression === TRUE) return FALSE;
   if (expression === FALSE) return TRUE;
   return [NOT, expression];
+};
+
+export const symbolize = (expression) => {
+  if (typeof expression === 'string') return KEYWORDS[expression] ?? term(expression);
+  if (isSymbol(expression)) return expression;
+  if (Array.isArray(expression)) return expression.map(t => symbolize(t));
+  throw new Error(`Invalid expression: ${expression.toString()}`);
+};
+
+export const getSymbols = (expression) => {
+  const result = new Set();
+  const addExpression = (exp) => {
+    if (isSymbol(exp)) {
+      if (exp === AND || exp === OR || exp === NOT || exp === TRUE || exp === FALSE) {
+        return;
+      }
+      result.add(exp);
+      return;
+    }
+    if (isExpression(exp)) {
+      exp.slice(1).forEach(e => addExpression(e));
+      return;
+    }
+    console.error('Invalid expression', expression);
+    throw new Error('Invalid Expression');
+  };
+  addExpression(symbolize(expression));
+  return Array.from(result);
+};
+
+export const interpret = (expression) => {
+  if (expression === TRUE) return () => true;
+  if (expression === FALSE) return () => false;
+  if (isSymbol(expression) && !KEYWORDS[expression]) {
+    return (props) => props[expression.description];
+  }
+  if (isExpression(expression)) {
+    if (expression[0] === NOT) {
+      const int = interpret(expression[1]);
+      return (props) => !int(props);
+    }
+    if (expression[0] === OR) {
+      const int = expression.slice(1).map(interpret);
+      return (props) => int.reduce((s, t) => s || t(props), false);
+    }
+    if (expression[0] === AND) {
+      const int = expression.slice(1).map(interpret);
+      return (props) => int.reduce((s, t) => s && t(props), true);
+    }
+    throw new Error(`Unknown operator: ${expression[0].toString()}`);
+  }
 };

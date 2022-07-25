@@ -10,6 +10,10 @@
     -->
     <script src="./paper-core.min.js"></script>
     <!--
+      Import the boolean grammar (defined in ./boolGrammar.pegjs, built during server startup)
+    -->
+    <script src="./boolGrammar.js"></script>
+    <!--
       type="module"?  .mjs?
 
       A good place to start is:
@@ -68,7 +72,10 @@
       <label for="srcN"><input name="notation" type="radio" id="srcN" value="SOURCE" />Pasteable source</label>
     </p>
 
-    <p class="formula">Empty Set</p>
+    <p class="formula">
+      <input id="formula" value="Empty Set" />
+      <button id="simplify">Simplify</button>
+    </p>
   </body>
 </html>
 <!--

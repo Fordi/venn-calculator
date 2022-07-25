@@ -1,9 +1,11 @@
-/* globals window, document, paper */
-import getFormula from './getFormula.mjs';
+/* globals window, document, paper, boolGrammar */
+import getFormula, { REGIONS } from './getFormula.mjs';
 import { findEls } from './dom.mjs';
 import diagram from './diagram.mjs';
 import toString from './boolean/toString.mjs';
 import { simplify } from './boolean/simplify.mjs';
+import { getSymbols, symbolize } from './boolean/tools.mjs';
+import { AND, FALSE } from './boolean/consts.mjs';
 
 // Calculate the Venn number for the selected checkboxes
 // Incidentally, this is an arrow function
@@ -67,6 +69,10 @@ const setVennNumber = (n) => {
   });
 };
 
+const updateFormula = (f) => {
+  document.querySelector('#formula').value = f;
+};
+
 // Once the window is loaded, and we have access to the full DOM...
 window.addEventListener('load', () => {
   // Get all the checkboxes
@@ -79,9 +85,7 @@ window.addEventListener('load', () => {
     // Get the Set formula for that number
     const result = formatFormula(vennNo);
     // populate the output with the new info.
-    findEls('.formula').forEach((el) => {
-      el.textContent = `${vennNo}: ${result}`;
-    });
+    updateFormula(result);
   };
   const auto = () => {
     if (!document.querySelector('input#rAuto').checked) return;
@@ -110,13 +114,28 @@ window.addEventListener('load', () => {
     });
     update();
   });
+  document.querySelector('#simplify').addEventListener('click', () => {
+    const value = document.querySelector('#formula').value.trim();
+    if (value === 'Empty Set' || value === '()' || value === 'undefined') {
+      setVennNumber(0);
+      updateDiagram(0);
+      return;
+    }
+    const parsed = symbolize(boolGrammar.parse(value));
+    console.log(getSymbols(parsed));
+    const simple = simplify(parsed);
+    const num = REGIONS.reduce((sum, region, index) => (
+      sum + ((simplify([AND, region, simple]) !== FALSE) ? (1 << index) : 0)
+    ), 0);
+    updateFormula(toString(simple, getNotation()));
+    setVennNumber(num);
+    updateDiagram(num);
+  });
   findEls('.notation input[type="radio"]').forEach((rb) => {
     rb.addEventListener('change', () => {
       const vennNo = getVennNumber();
       const result = formatFormula(vennNo);
-      findEls('.formula').forEach((el) => {
-        el.textContent = `${result}`;
-      });
+      updateFormula(result);
     });
   });
   // Initialize Paper.js
