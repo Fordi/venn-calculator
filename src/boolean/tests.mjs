@@ -9,7 +9,7 @@ const OPERATORS = { [AND]: AND, [OR]: OR, [NOT]: NOT };
 export const isExpression = exp => Array.isArray(exp) && !!OPERATORS[exp[0]];
 export const isOr = exp => isExpression(exp) && exp[0] === OR;
 export const isAnd = exp => isExpression(exp) && exp[0] === AND;
-export const isNot = exp => isExpression(exp) && exp[0] === NOT;
+export const isNot = exp => isExpression(exp) && exp[0] === NOT && !!exp[1];
 export const isSymbol = exp => typeof exp === 'symbol';
 
 // Whether `expression` contains `subexpression`
@@ -17,9 +17,11 @@ export const contains = (expression, subexpression) => (
   expression.slice(1).some(se => areEqual(se, subexpression))
 );
 
-export const areEqual = (e1, e2) => {
+export const areEqual = (e1, e2, inv = true) => {
   // Always treat !!EXP as EXP
-  [e1, e2] = [e1, e2].map(e => involution(e));
+  if (inv) {
+    [e1, e2] = [e1, e2].map(e => involution(e));
+  }
   // If either are falsy, they're inequal (for our purposes)
   if (!e1 || !e2) return false;
   // Fastest end: if they're the same object, they're equal
