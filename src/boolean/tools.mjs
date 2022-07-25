@@ -1,30 +1,42 @@
 import { AND, FALSE, KEYWORDS, NOT, OR, TRUE } from "./consts.mjs";
 import { areEqual, isExpression, isNot, isSymbol } from "./tests.mjs";
 
-export const findCommon = (exp1, exp2) => {
-  if (!isExpression(exp1) || !isExpression(exp2) || exp1[0] !== exp2[0]) {
-    //Different operations or non-expression; return nothing.
+export const findCommon = (...exps) => {
+  const nExps = exps.length;
+  //Different operations or non-expression; return nothing.
+  if (nExps < 2 || exps.some((e) => !isExpression(e) || e[0] !== exps[0][0])) {
     return {};
   }
-  const P = [exp1[0]];
-  let Q = exp1;
-  let R = exp2;
-  for (let p = 1; p < exp1.length; p++) {
-    for (let q = 1; q < exp2.length; q++) {
-      if (areEqual(exp1[p], exp2[q])) {
-        P.push(exp1[p]);
-        Q = without(Q, exp1[p]);
-        R = without(R, exp2[q]);
+  const terms = [];
+  exps.forEach((exp, ei) => {
+    exp.slice(1).forEach((t) => {
+      const haveCommon = terms.some((item) => {
+        if (areEqual(t, item[0])) {
+          item[1].push(ei);
+          return true;
+        }
+        return false;
+      });
+      if (!haveCommon) {
+        terms.push([t, [ei]]);
       }
-    }
-  }
+    });
+  });
+  const common = terms.filter((t) => t[1].length === nExps).map(([T]) => T);
+  const unique = terms.reduce((r, [T, where]) => {
+    if (where.length === nExps) return r;
+    where.forEach((ei) => {
+      r[ei].push(T);
+    });
+    return r;
+  }, exps.map(() => []));
+
   // No common values.
-  if (!P.length) return {};
+  if (!common.length) return {};
   // Return as subexpressions
   return {
-    common: P.length > 2 ? P : P[1],
-    left: Q.length > 2 ? Q : Q[1],
-    right: R.length > 2 ? R : R[1],
+    common,
+    unique
   };
 };
 

@@ -14,11 +14,12 @@ const collect = (exp, p) => {
   if (ands.length < 2) return exp;
   for (let pi = 0; pi < ands.length - 1; pi++) {
     for (let qi = pi + 1; qi < ands.length; qi++) {
-      const { common, left, right } = findCommon(ands[pi], ands[qi]);
+      const { common, unique } = findCommon(ands[pi], ands[qi]);
       if (!common) continue;
       const others = without(without(exp, ands[pi]), ands[qi]);
       // It's possible that left and right are each other's complements
-      const uQR = [OR, left, right];
+      const u = unique.map((t) => t.length === 1 ? t[0] : [AND, ...t]);
+      const uQR = [OR, ...u];
       if (!(
         // Potential advantage 1: we reduce to a single AND and parent is an AND,
         //  so we'll be able to associate upwards
@@ -33,7 +34,7 @@ const collect = (exp, p) => {
         || !areEqual(uQR, absorption(uQR))
       // No advantages? try the next pair.
       )) continue;
-      const group = [AND, common, uQR];
+      const group = [AND, ...common, uQR];
       if (others.length > 1) {
         return [...others, group];
       }
