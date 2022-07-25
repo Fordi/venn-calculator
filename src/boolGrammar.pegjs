@@ -1,6 +1,6 @@
 LooseExpression = _ expr:(PolishExpression / Expression) _ { return expr; }
 
-Expression = Group / Union
+Expression = Union / Group
 
 Group
   = '(' expr:LooseExpression ')' { return expr; }
@@ -10,10 +10,10 @@ TerseInversion
   = InvertOperation f:Term
 
 Inversion
-  = InvertOperation f:(Group / Symbol / Boolean) { return ['NOT', f] }
+  = InvertOperation f:(Group / Symbol / Boolean / Inversion) { return ['NOT', f] }
 
 PolishOperand
-  = __ expr:Expression { return expr; }
+  = Separator expr:Expression { return expr; }
 
 PolishExpression
   = op:Operation operands:PolishOperand+ {
@@ -57,8 +57,8 @@ Intersection
   }
 
 Boolean
-  = ([Tt][Rr][Uu][Ee] / "T" / "⊤" / "1" / "■")  { return 'TRUE'; }
-  / ([Ff][Aa][Ll][Ss][Ee] / "F" / "0" / "⊥" / "□") { return 'FALSE'; }
+  = ([Tt][Rr][Uu][Ee] / "⊤" / "1" / "■")  { return 'TRUE'; }
+  / ([Ff][Aa][Ll][Ss][Ee] / "0" / "⊥" / "□") { return 'FALSE'; }
 
 Symbol
   = S:[A-Za-z] { return S; }
@@ -82,5 +82,8 @@ InvertOperation
 _ "optional whitespace"
   = [ \t\n\r]*
 
-__ "whitespace"
+__ "required whitespace"
   = [ \t\n\r]+
+
+Separator
+  = __ / _ "," _
