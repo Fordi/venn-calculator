@@ -24,7 +24,7 @@ const simplifySubexpressions = exp => {
 // Hackery.  `Array(n + 1).join(str)` will repeat `str` `n` times
 const indent = () => new Array(depth + 1).join('  ');
 
-const pass = (exp, p = null) => {
+const pass = (exp, p) => {
   // Symbols cannot be further simplified
   if (isSymbol(exp)) return exp;
   // Normalize the expression by simplifying its children and ordering it consistently.
@@ -36,7 +36,7 @@ const pass = (exp, p = null) => {
     // Try applying the transform
     const r = transforms[name](exp, p);
     // When we find one that does something
-    if (!areEqual(exp, r)) {
+    if (!areEqual(exp, r, false)) {
       // Log the change if asked to
       if (LOG) {
         console.log(`${indent()}${name}${p ? `(${p.description.trim()})` : ''}: ${toString(exp)} -> ${toString(r)}`);
