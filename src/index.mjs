@@ -4,7 +4,7 @@ import { findEls } from './dom.mjs';
 import diagram from './diagram.mjs';
 import toString from './boolean/toString.mjs';
 import { simplify } from './boolean/simplify.mjs';
-import { getSymbols, symbolize } from './boolean/tools.mjs';
+import { symbolize } from './boolean/tools.mjs';
 import { AND, FALSE } from './boolean/consts.mjs';
 
 // Calculate the Venn number for the selected checkboxes
@@ -122,7 +122,6 @@ window.addEventListener('load', () => {
       return;
     }
     const parsed = symbolize(boolGrammar.parse(value));
-    console.log(getSymbols(parsed));
     const simple = simplify(parsed);
     const num = REGIONS.reduce((sum, region, index) => (
       sum + ((simplify([AND, region, simple]) !== FALSE) ? (1 << index) : 0)
