@@ -17,7 +17,7 @@ const polar = (turns, mag) => (
   ])
 );
 
-const makeObjects = () => {
+const makeObjects = ({ onRegionClick } = {}) => {
   // Our scaling parameter; basically, it's there to make sure that whatever
   //  size we choose for our canvas, the diagram will fit.
   const scale = Math.min(paper.view.bounds.width, paper.view.bounds.height) / 4;
@@ -59,18 +59,29 @@ const makeObjects = () => {
   //  up the lines.
   regions.forEach(region => region.insertBelow(sets[0]));
 
+  const regionLabels = [
+    label('   I   ', polar(0, move * 1.25)),
+    label('   II  ', polar(-1/6, move * 0.66)),
+    label('  III  ', polar(-1/3, move * 1.25)),
+    label('   IV  ', polar(1/6, move * 0.66)),
+    label('   V   ', paper.view.center.add([0, 0.125 * scale])),
+    label('   VI  ', polar(3/6, move * 0.66)),
+    label('  VII  ', polar(-2/3, move * 1.25)),
+  ];
+
+  // Let the user click on the region labels to toggle them.
+  if (onRegionClick) {
+    regionLabels.forEach((region, index) => {
+      region.onClick = () => onRegionClick(index);
+    });
+  }
+
   // Draw in all the text labels.
   const labels = [
     label('A', polar(0, move).add([0, -1.25 * scale])),
     label('B', polar(-1/3, move).add([0, -1.25 * scale])),
     label('C', polar(-2/3, move).add([0, +1.25 * scale])),
-    label('I', polar(0, move * 1.25)),
-    label('II', polar(-1/6, move * 0.66)),
-    label('III', polar(-1/3, move * 1.25)),
-    label('IV', polar(1/6, move * 0.66)),
-    label('V', paper.view.center.add([0, 0.125 * scale])),
-    label('VI', polar(3/6, move * 0.66)),
-    label('VII', polar(-2/3, move * 1.25)),
+    ...regionLabels,
   ];
 
   return {
@@ -80,9 +91,9 @@ const makeObjects = () => {
   };
 };
 
-export default () => {
+export default (options) => {
   // Generate the object set
-  const objs = makeObjects();
+  const objs = makeObjects(options);
   // We'll return an update function, to the consumer can
   //  tell the diagram to update its presentation.
   const update = (vennNo) => {

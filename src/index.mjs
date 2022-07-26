@@ -126,6 +126,7 @@ window.addEventListener('load', () => {
     });
     update();
   });
+
   // Clear the checkboxes
   document.querySelector('.clear').addEventListener('click', () => {
     boxes.forEach((box) => {
@@ -169,6 +170,10 @@ window.addEventListener('load', () => {
   paper.setup(document.querySelector('canvas'));
 
   // Initialize the diagram
-  const updateDiagram = diagram();
+  const updateDiagram = diagram({
+    onRegionClick: (index) => {
+      document.querySelector(`.region_state input[type="checkbox"][value="${index}"]`).click();
+    }
+  });
 });
 // You can proceed to checking out `diagram.mjs`
