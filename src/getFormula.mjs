@@ -1,6 +1,4 @@
-import { AND, OR } from './boolean/consts.mjs';
-import { isAnd } from './boolean/tests.mjs';
-import { invert, term } from './boolean/tools.mjs';
+import { AND, OR, isAnd, invert, term } from '@fordi-org/bsimp';
 
 // Find all the possible combinations of `set` with `count` members
 const group = (count, set) => {

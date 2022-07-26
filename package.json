@@ -2,8 +2,7 @@
   "name": "venn-calculator",
   "scripts": {
     "build": "pegjs --format globals -e boolGrammar -o src/boolGrammar.js src/boolGrammar.pegjs",
-    "start": "npm run build; http-server src",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
+    "start": "npm run build; http-server src"
   },
   "license": "ISC",
   "dependencies": {
@@ -11,12 +10,6 @@
   },
   "devDependencies": {
     "eslint": "^8.20.0",
-    "jest": "^28.1.3",
     "pegjs": "^0.10.0"
-  },
-  "jest": {
-    "testMatch": [
-      "**/?(*.)+(spec|test).(mjs|js)"
-    ]
   }
 }

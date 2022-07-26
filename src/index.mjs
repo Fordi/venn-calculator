@@ -1,11 +1,8 @@
-/* globals window, document, paper, boolGrammar */
+/* globals window, document, paper */
 import getFormula, { REGIONS } from './getFormula.mjs';
 import { findEls } from './dom.mjs';
 import diagram from './diagram.mjs';
-import toString from './boolean/toString.mjs';
-import { simplify } from './boolean/simplify.mjs';
-import { symbolize } from './boolean/tools.mjs';
-import { AND, FALSE } from './boolean/consts.mjs';
+import { simplify, parse, toString, AND, FALSE } from '@fordi-org/bsimp';
 
 // Calculate the Venn number for the selected checkboxes
 // Incidentally, this is an arrow function
@@ -121,7 +118,7 @@ window.addEventListener('load', () => {
       updateDiagram(0);
       return;
     }
-    const parsed = symbolize(boolGrammar.parse(value));
+    const parsed = parse(value);
     const simple = simplify(parsed);
     const num = REGIONS.reduce((sum, region, index) => (
       sum + ((simplify([AND, region, simple]) !== FALSE) ? (1 << index) : 0)

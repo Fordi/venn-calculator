@@ -10,9 +10,16 @@
     -->
     <script src="./paper-core.min.js"></script>
     <!--
-      Import the boolean grammar (defined in ./boolGrammar.pegjs, built during server startup)
+      See: https://blog.logrocket.com/es-modules-in-browsers-with-import-maps/
+      Map import statements to URLs
     -->
-    <script src="./boolGrammar.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "@fordi-org/bsimp": "https://unpkg.com/@fordi-org/bsimp/dist/bsimp.module.mjs"
+        }
+      }
+    </script>
     <!--
       type="module"?  .mjs?
 
