@@ -1,4 +1,4 @@
-import { AND, OR, isAnd, invert, term } from '@fordi-org/bsimp';
+import { AND, OR, isAnd, invert, term } from './bsimp.mjs';
 
 // Find all the possible combinations of `set` with `count` members
 const group = (count, set) => {
