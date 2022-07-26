@@ -1,3 +1,5 @@
+/* globals expect */
+
 import { symbolize } from '../src/boolean/tools.mjs';
 import toString, { LOGIC, POLISH, SET, SOURCE } from '../src/boolean/toString.mjs';
 

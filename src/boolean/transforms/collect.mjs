@@ -1,7 +1,7 @@
 
 
 import { AND, OR } from "../consts.mjs";
-import { areEqual, hasComplement, isAnd, isOr } from "../tests.mjs";
+import { areEqual, hasAnd, hasComplement, isAnd, isOr } from "../tests.mjs";
 import { findCommon, without } from "../tools.mjs";
 import absorption from "./absorption.mjs";
 
@@ -10,6 +10,7 @@ import absorption from "./absorption.mjs";
 // Do this only if this is an OR and the parent is an AND or top-level (null)
 const collect = (exp, p) => {
   if (!(isOr(exp) && p !== OR)) return exp;
+  if (!hasAnd(exp)) return exp;
   const ands = exp.slice(1).filter(isAnd);
   if (ands.length < 2) return exp;
   for (let pi = 0; pi < ands.length - 1; pi++) {
