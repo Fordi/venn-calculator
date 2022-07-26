@@ -12,7 +12,6 @@ const collect = (exp, p) => {
   if (!(isOr(exp) && p !== OR)) return exp;
   if (!hasAnd(exp)) return exp;
   const ands = exp.slice(1).filter(isAnd);
-  if (ands.length < 2) return exp;
   for (let pi = 0; pi < ands.length - 1; pi++) {
     for (let qi = pi + 1; qi < ands.length; qi++) {
       const { common, unique } = findCommon(ands[pi], ands[qi]);
