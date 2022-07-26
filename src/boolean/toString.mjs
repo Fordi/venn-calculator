@@ -8,7 +8,7 @@ export const SOURCE = Symbol('pasteable');
 
 let defaultNotation = SET;
 
-const stringify = exp => {
+const toSetString = exp => {
   if (typeof exp === 'symbol') {
     return exp.description;
   }
@@ -17,16 +17,11 @@ const stringify = exp => {
   }
 
   if (!exp[SET]) {
-    if (isExpression(exp)) {
-      const [operation, ...operands] = exp;
-      const value = operation === NOT
-        ? (stringify(operation) + stringify(operands[0]))
-        : `(${operands.map(stringify).join(stringify(operation))})`;
-      Object.defineProperty(exp, SET, { value });
-    } else {
-      console.error(exp, 'is not a valid expression.');
-      process.exit(-1);
-    }
+    const [operation, ...operands] = exp;
+    const value = operation === NOT
+      ? (toSetString(operation) + toSetString(operands[0]))
+      : `(${operands.map(toSetString).join(toSetString(operation))})`;
+    Object.defineProperty(exp, SET, { value });
   }
   return exp[SET];
 };
@@ -101,10 +96,10 @@ const toString = (exp, mode) => {
   const m = mode ?? defaultNotation;
   if (m === SET) {
     return (
-      stringify(exp)
+      toSetString(exp)
         .replace(/∩ !/g, '∖ ')
         .replace(/^\((.*)\)$/g, '$1')
-    ) ?? 'Empty Set';
+    );
   }
   if (m === POLISH) {
     return toPolishString(exp);
@@ -115,9 +110,7 @@ const toString = (exp, mode) => {
         .replace(/^\((.*)\)$/g, '$1')
     );
   }
-  if (m === SOURCE) {
-    return toSource(exp);
-  }
+  return toSource(exp);
 };
 
 export const setNotation = (v) => {
