@@ -111,12 +111,7 @@ export const getSymbols = (expression) => {
       result.add(exp);
       return;
     }
-    if (isExpression(exp)) {
-      exp.slice(1).forEach(e => addExpression(e));
-      return;
-    }
-    console.error('Invalid expression', expression);
-    throw new Error('Invalid Expression');
+    exp.forEach(e => addExpression(e));
   };
   addExpression(symbolize(expression));
   return Array.from(result);
@@ -129,10 +124,6 @@ export const interpret = (expression) => {
     return (props) => props[expression.description];
   }
   if (isExpression(expression)) {
-    if (expression[0] === NOT) {
-      const int = interpret(expression[1]);
-      return (props) => !int(props);
-    }
     if (expression[0] === OR) {
       const int = expression.slice(1).map(interpret);
       return (props) => int.reduce((s, t) => s || t(props), false);
@@ -141,6 +132,11 @@ export const interpret = (expression) => {
       const int = expression.slice(1).map(interpret);
       return (props) => int.reduce((s, t) => s && t(props), true);
     }
+    const int = interpret(expression[1]);
+    return (props) => !int(props);
+}
+  if (Array.isArray(expression)) {
     throw new Error(`Unknown operator: ${expression[0].toString()}`);
   }
+  throw new Error(`Invalid expression: ${expression.toString()}`);
 };

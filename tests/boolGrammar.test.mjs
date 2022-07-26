@@ -1,14 +1,5 @@
 /* globals expect */
-
-import peg from 'pegjs';
-import { readFile } from 'fs/promises';
-
-const parser = peg.generate(
-  await readFile(
-    new URL('../src/boolGrammar.pegjs', import.meta.url).pathname,
-    'utf-8'
-  )
-);
+import parser from './parser.mjs';
 
 const region_0x03 = ['OR', ['AND', 'A', 'B', 'C'], ['AND', 'A', ['NOT', 'B'], ['NOT', 'C']]];
 const region_0x70 = ['OR', ['AND', 'C', ['NOT', 'A']], ['AND', 'B', 'C']];

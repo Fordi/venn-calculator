@@ -1,15 +1,7 @@
 /* globals expect */
-import peg from 'pegjs';
-import { simplify } from '../src/boolean/simplify.mjs';
-import { readFile } from 'fs/promises';
+import parser from './parser.mjs';
 import { symbolize } from '../src/boolean/tools.mjs';
-
-const parser = peg.generate(
-  await readFile(
-    new URL('../src/boolGrammar.pegjs', import.meta.url).pathname,
-    'utf-8'
-  )
-);
+import { simplify } from '../src/boolean/simplify.mjs';
 
 const parse = (s) => symbolize(parser.parse(s));
 
