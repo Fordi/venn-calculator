@@ -2,6 +2,8 @@
 import getFormula, { REGIONS } from './getFormula.mjs';
 import { findEls } from './dom.mjs';
 import diagram from './diagram.mjs';
+// This was a beast to implement.  If you're interested, check out
+//  https://github.com/Fordi/bsimp
 import { simplify, parse, toString, AND, FALSE } from '@fordi-org/bsimp';
 
 // Calculate the Venn number for the selected checkboxes
