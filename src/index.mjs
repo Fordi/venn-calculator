@@ -49,23 +49,14 @@ const getNotation = () => {
 
 const formatFormula = n => toString(simplify(getFormula(n)), getNotation());
 
-// See: https://en.wikipedia.org/wiki/Gray_code
-const binToGray = (n) => n ^ (n >> 1);
-const grayToBin = (n) => {
-  let m = n;
-  while (m) {
-    m >>= 1;
-    n ^= m;
-  }
-  return n;
-};
-
-const setVennNumber = (n) => {
+// Set the region checkboxes to a venn number
+const setCheckboxes = (vennNo) => {
   findEls('.region_state input[type="checkbox"]').forEach((box) => {
-    box.checked = ((n >> box.value) & 1) !== 0;
+    box.checked = ((vennNo >> box.value) & 1) !== 0;
   });
 };
 
+// Update the value of the formula field
 const updateFormula = (f) => {
   document.querySelector('#formula').value = f;
 };
@@ -84,49 +75,86 @@ window.addEventListener('load', () => {
     // populate the output with the new info.
     updateFormula(result);
   };
+
+  // See: https://en.wikipedia.org/wiki/Gray_code
+  // Convert a number to a Gray code
+  const binToGray = (n) => n ^ (n >> 1);
+  // Convert a Gray code to a number.
+  const grayToBin = (n) => {
+    let m = n;
+    while (m) {
+      m >>= 1;
+      n ^= m;
+    }
+    return n;
+  };
+
+
+  // Go to the next Gray number once every quarter second
+  // Stop if "Auto" is no longer checked.
+  // Why Gray codes?  Because only one bit of a Gray code changes
+  // from one to the next.
   const auto = () => {
     if (!document.querySelector('input#rAuto').checked) return;
-    const next = binToGray((grayToBin(getVennNumber()) + 1) & 0x7F);
-    setVennNumber(next);
+    // Convert the current Venn number from a Gray code
+    const index = grayToBin(getVennNumber());
+    // Get the next one, looping so it fits in 7 bits.
+    const nextIndex = (index + 1) & ((1 << 8) - 1);
+    // Convert back into a Gray code.
+    const next = binToGray(nextIndex);
+    setCheckboxes(next);
     update();
     setTimeout(auto, 250);
-  }
-  document.querySelector('input#rAuto').addEventListener('click', auto);
+  };
+
+  // Start cycling on click.
+  document.querySelector('input#rAuto').addEventListener('change', auto);
+  
   // On each one...
   //   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach
   boxes.forEach((el) => {
     // Listen for changes
     el.addEventListener('change', update);
   });
+
+  // swap all the boxes
   document.querySelector('.invert').addEventListener('click', () => {
-    // swap all the boxes
     boxes.forEach((box) => {
       box.checked = !box.checked;
     });
     update();
   });
+  // Clear the checkboxes
   document.querySelector('.clear').addEventListener('click', () => {
     boxes.forEach((box) => {
       box.checked = false;
     });
     update();
   });
-  document.querySelector('#simplify').addEventListener('click', () => {
+
+  // This allows us to manually enter a logical expression and 
+  // present a Venn diagram for it.
+  document.querySelector('#setVenn').addEventListener('click', () => {
+    // Grab the value from the field
     const value = document.querySelector('#formula').value.trim();
-    if (value === 'Empty Set' || value === '()' || value === 'undefined') {
-      setVennNumber(0);
+    // Handle the special case of an empty set
+    if (value === 'Empty Set' || value === '()' || value === 'undefined' || value === '∅') {
+      setCheckboxes(0);
       updateDiagram(0);
       return;
     }
+    // Parse the string
     const parsed = parse(value);
-    const simple = simplify(parsed);
+    // Calculate which regions are lit by this expression
     const num = REGIONS.reduce((sum, region, index) => (
-      sum + ((simplify([AND, region, simple]) !== FALSE) ? (1 << index) : 0)
+      sum + ((simplify([AND, region, parsed]) !== FALSE) ? (1 << index) : 0)
     ), 0);
-    updateFormula(toString(simple, getNotation()));
-    setVennNumber(num);
+    // Set the checkboxes
+    setCheckboxes(num);
+    // Update the diagram
     updateDiagram(num);
   });
+  // Reformat the current formula when changing formats
   findEls('.notation input[type="radio"]').forEach((rb) => {
     rb.addEventListener('change', () => {
       const vennNo = getVennNumber();
@@ -134,8 +162,10 @@ window.addEventListener('load', () => {
       updateFormula(result);
     });
   });
+
   // Initialize Paper.js
   paper.setup(document.querySelector('canvas'));
+
   // Initialize the diagram
   const updateDiagram = diagram();
 });
